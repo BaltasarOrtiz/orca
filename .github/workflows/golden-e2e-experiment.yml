@@ -66,12 +66,14 @@ jobs:
         run: |
           xvfb-run --auto-servernum env SKIP_BUILD=1 ORCA_E2E_FORWARD_APP_LOGS=1 pnpm run test:e2e -- tests/e2e/golden-core-flows.spec.ts
           xvfb-run --auto-servernum env SKIP_BUILD=1 ORCA_E2E_FORWARD_APP_LOGS=1 pnpm run test:e2e:terminal-rendering-golden
+          xvfb-run --auto-servernum env SKIP_BUILD=1 ORCA_E2E_FORWARD_APP_LOGS=1 pnpm run test:e2e:source-control-golden
 
       - name: Run golden E2E tests on macOS
         if: runner.os == 'macOS'
         run: |
           env SKIP_BUILD=1 ORCA_E2E_FORWARD_APP_LOGS=1 pnpm run test:e2e -- tests/e2e/golden-core-flows.spec.ts
           env SKIP_BUILD=1 ORCA_E2E_FORWARD_APP_LOGS=1 pnpm run test:e2e:terminal-rendering-golden
+          env SKIP_BUILD=1 ORCA_E2E_FORWARD_APP_LOGS=1 pnpm run test:e2e:source-control-golden
 
       - name: Run golden E2E tests on Windows
         if: runner.os == 'Windows'
@@ -80,6 +82,7 @@ jobs:
           $env:SKIP_BUILD = '1'
           $env:ORCA_E2E_FORWARD_APP_LOGS = '1'
           pnpm run test:e2e:windows-fresh-startup-golden
+          pnpm run test:e2e:source-control-golden
 
       - name: Upload Playwright traces
         if: failure()
