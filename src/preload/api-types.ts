@@ -1192,7 +1192,6 @@ export type PreloadApi = {
           | 'worktreeBasePath'
           | 'kind'
           | 'issueSourcePreference'
-          | 'externalWorktreeVisibility'
           | 'externalWorktreeVisibilityPromptDismissedAt'
           | 'externalWorktreeInboxBaselinePaths'
           | 'importedExternalWorktreePaths'
@@ -1202,6 +1201,7 @@ export type PreloadApi = {
           | 'forkSyncMode'
         >
       > & {
+        externalWorktreeVisibility?: Repo['externalWorktreeVisibility'] | null
         sourceControlAi?: Repo['sourceControlAi'] | null
         externalWorktreeDiscoverySuppressedAt?: Repo['externalWorktreeDiscoverySuppressedAt'] | null
       }

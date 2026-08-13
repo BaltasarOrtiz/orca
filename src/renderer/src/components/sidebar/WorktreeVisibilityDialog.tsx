@@ -41,6 +41,7 @@ import {
   type ActiveVisibilityMutation,
   useVisibilityMutationFence
 } from './worktree-visibility-mutation-fence'
+import { useRepoOwnerVisibilityDefaults } from './use-repo-owner-visibility-defaults'
 
 export default function WorktreeVisibilityDialog(): React.JSX.Element | null {
   const activeModal = useAppStore((s) => s.activeModal)
@@ -76,9 +77,10 @@ export default function WorktreeVisibilityDialog(): React.JSX.Element | null {
   const effectiveBusyPath =
     busyPath ?? (activeMutation?.kind === 'row' ? activeMutation.path : null)
   const effectivelyToggling = isToggling || activeMutation?.kind === 'toggle'
+  const visibilityDefaults = useRepoOwnerVisibilityDefaults(repo)
+  const isLegacyRepo = repo ? isLegacyRepoForExternalWorktreeVisibility(repo) : false
   const showOther = repo
-    ? effectiveExternalWorktreeVisibility(repo, isLegacyRepoForExternalWorktreeVisibility(repo)) ===
-      'show'
+    ? effectiveExternalWorktreeVisibility(repo, isLegacyRepo, visibilityDefaults) === 'show'
     : false
   const showAgentScratch = repo ? effectiveAgentWorktreeVisibility(repo) === 'show' : false
   const alwaysShow = showOther && showAgentScratch
@@ -201,10 +203,7 @@ export default function WorktreeVisibilityDialog(): React.JSX.Element | null {
         const updated = await updateTargetRepo(repoId, {
           externalWorktreeVisibility: checked ? 'show' : 'hide',
           agentWorktreeVisibility: checked ? 'show' : 'hide',
-          // Why: showing hidden externals again should re-enable the inbox if the
-          // user previously opted out of discovery prompts for this repo.
-          // Why: null is the transport sentinel for clearing on remote runtime paths
-          // where `undefined` is stripped before persistence.
+          // Why: null re-enables discovery remotely, where undefined is stripped.
           ...(checked ? { externalWorktreeDiscoverySuppressedAt: null } : {})
         })
         if (!updated) {
